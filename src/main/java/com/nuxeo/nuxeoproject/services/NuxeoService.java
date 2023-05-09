@@ -37,8 +37,8 @@ public class NuxeoService {
 
         List<Document> results = new ArrayList<>();
         System.out.println(tags.toArray().length);
-        for (int i = 0; i < 10; i++) {
-            String query = "Select * From Document WHERE ecm:tag  = '" + tags.toArray() + "'";
+        for (int i = 0; i < tags.toArray().length; i++) {
+            String query = "Select * From Document WHERE ecm:tag  = '" + tags.get(i) + "'";
             Documents documents = connector.getNuxeoClient().repository().query(query);
             results.addAll(documents.getDocuments());
         }

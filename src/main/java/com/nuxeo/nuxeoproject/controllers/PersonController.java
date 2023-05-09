@@ -37,7 +37,7 @@ public class PersonController {
 
     @GetMapping("/documents-tags/{tags}")
     public List<Document> findAllByTags(@PathVariable(name = "tags") List<String> tags) throws IOException {
-        List<String> tagsTest = Arrays.asList("alguma", "coisa");
+        List<String> tagsTest = Arrays.asList("alguma", "testando");
         return personService.findAllDocumentoByTags(tagsTest);
     }
 }
