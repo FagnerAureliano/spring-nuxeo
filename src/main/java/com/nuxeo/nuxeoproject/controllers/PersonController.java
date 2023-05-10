@@ -3,14 +3,16 @@ package com.nuxeo.nuxeoproject.controllers;
 import com.nuxeo.nuxeoproject.services.PersonService;
 import org.nuxeo.client.objects.Document;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @RestController
@@ -25,19 +27,45 @@ public class PersonController {
         this.personService = personService;
     }
 
-    @GetMapping("/documents/{uid}")
+    @GetMapping("/documents-uid/{uid}")
     public Optional<Document> findByUID(@PathVariable(name = "uid") String uid) throws IOException {
-        return personService.findAllDocumentoByUID(uid);
+        return personService.findAllDocumentsByUID(uid);
     }
 
-    @GetMapping("/documents-name/{name}")
-    public List<Document> findAllByName(@PathVariable(name = "name") String name) throws IOException {
-        return personService.findAllDocumentoByWords(name);
+    @GetMapping("/documents-title/{name}")
+    public List<Document> findAllByTitle(@PathVariable(name = "name") String name) throws IOException {
+        return personService.findAllDocumentsByTitle(name);
     }
 
     @GetMapping("/documents-tags/{tags}")
     public List<Document> findAllByTags(@PathVariable(name = "tags") List<String> tags) throws IOException {
-        List<String> tagsTest = Arrays.asList("alguma", "testando");
-        return personService.findAllDocumentoByTags(tagsTest);
+        return personService.findAllDocumentsByTags(tags);
+    }
+
+    @PostMapping("/documents-folder/{name}")
+    public void createFolder(@PathVariable(name = "name") String name) throws IOException {
+        personService.createFolder(name);
+    }
+
+    @PostMapping("/documents-file/{name}")
+    public void createFile(@PathVariable(name = "name") String name) throws IOException {
+        personService.createFile(name);
+    }
+    @PostMapping("/upload")
+    public ResponseEntity<String> createDocumentWithFile(@RequestParam("file") MultipartFile file) throws IOException {
+        System.out.println(file);
+        // create a File object from the uploaded MultipartFile
+//        File uploadedFile = new File(Objects.requireNonNull(file.getOriginalFilename()));
+//        FileOutputStream fileOutputStream = new FileOutputStream(uploadedFile);
+//        fileOutputStream.write(file.getBytes());
+//        fileOutputStream.close();
+
+        // call the service method to create the document
+//        String document = personService.createDocumentWithFile(file);
+
+        // return a response
+        String response = "Document created with ID: " ;
+//                + document;
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

@@ -3,6 +3,7 @@ package com.nuxeo.nuxeoproject.config;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import org.nuxeo.client.NuxeoClient;
+import org.nuxeo.client.objects.Repository;
 import org.nuxeo.client.objects.upload.BatchUpload;
 import org.nuxeo.client.objects.upload.BatchUploadManager;
 import org.slf4j.Logger;
@@ -68,4 +69,7 @@ public class NuxeoConnectorComponent {
         return this.path;
     }
 
+    public NuxeoClient nuxeoClient() {
+        return getNuxeoClient();
+    }
 }
