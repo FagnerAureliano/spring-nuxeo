@@ -4,6 +4,7 @@ import com.nuxeo.nuxeoproject.services.PersonService;
 import org.nuxeo.client.objects.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -51,9 +52,8 @@ public class PersonController {
     public void createFile(@PathVariable(name = "name") String name) throws IOException {
         personService.createFile(name);
     }
-    @PostMapping("/upload")
-    public ResponseEntity<String> createDocumentWithFile(@RequestParam("file") MultipartFile file) throws IOException {
-        System.out.println(file);
+    @PostMapping(path = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<String> createDocumentWithFile( @RequestPart(name = "arquivo") MultipartFile multipartFile) throws IOException {
         // create a File object from the uploaded MultipartFile
 //        File uploadedFile = new File(Objects.requireNonNull(file.getOriginalFilename()));
 //        FileOutputStream fileOutputStream = new FileOutputStream(uploadedFile);
@@ -61,11 +61,10 @@ public class PersonController {
 //        fileOutputStream.close();
 
         // call the service method to create the document
-//        String document = personService.createDocumentWithFile(file);
+        String document = personService.createDocumentWithFile(multipartFile);
 
         // return a response
-        String response = "Document created with ID: " ;
-//                + document;
+        String response = "Document created with ID: " + document;
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }
