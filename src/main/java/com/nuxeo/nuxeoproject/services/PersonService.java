@@ -23,6 +23,9 @@ public class PersonService {
     public List<Document> findAllDocumentsByTitle(String words) throws IOException {
         return nuxeoService.findDocumentByTitle(words);
     }
+ public List<Document> findDocumentByContent(String words) throws IOException {
+        return nuxeoService.findDocumentByContent(words);
+    }
 
     public List<Document> findAllDocumentsByTags(List<String> tags) throws IOException {
         return nuxeoService.findDocumentsByTags(tags);

@@ -38,6 +38,11 @@ public class PersonController {
         return personService.findAllDocumentsByTitle(name);
     }
 
+//    @GetMapping("/documents-content/{content}")
+//    public List<Document> findAllByTitle2(@PathVariable(name = "content") String content) throws IOException {
+//        return personService.findDocumentByContent(content);
+//    }
+
     @GetMapping("/documents-tags/{tags}")
     public List<Document> findAllByTags(@PathVariable(name = "tags") List<String> tags) throws IOException {
         return personService.findAllDocumentsByTags(tags);
@@ -54,13 +59,6 @@ public class PersonController {
     }
     @PostMapping(path = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> createDocumentWithFile( @RequestPart(name = "arquivo") MultipartFile multipartFile) throws IOException {
-        // create a File object from the uploaded MultipartFile
-//        File uploadedFile = new File(Objects.requireNonNull(file.getOriginalFilename()));
-//        FileOutputStream fileOutputStream = new FileOutputStream(uploadedFile);
-//        fileOutputStream.write(file.getBytes());
-//        fileOutputStream.close();
-
-        // call the service method to create the document
         String document = personService.createDocumentWithFile(multipartFile);
 
         // return a response

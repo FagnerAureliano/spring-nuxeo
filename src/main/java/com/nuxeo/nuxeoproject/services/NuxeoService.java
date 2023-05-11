@@ -1,6 +1,7 @@
 package com.nuxeo.nuxeoproject.services;
 
 import com.nuxeo.nuxeoproject.config.NuxeoConnectorComponent;
+import jakarta.el.PropertyNotFoundException;
 import org.nuxeo.client.Operations;
 import org.nuxeo.client.objects.Document;
 import org.nuxeo.client.objects.Documents;
@@ -83,5 +84,51 @@ public class NuxeoService {
 
         return savedDocument.getId();
     }
+
+
+    public Blob getBlobForDocument(String documentId) throws IOException {
+        Document doc = connector.nuxeoClient().repository().fetchDocumentById(documentId);
+        Blob blob = (Blob) doc.getProperties().get("file:content");
+        return blob;
+    }
+
+    public List<Document> findDocumentByContent(String searchWord) throws IOException {
+        // Build the query
+        String query = String.format(
+                "SELECT * FROM Document WHERE ecm:fulltext ILIKE '%s' AND ecm:mixinType != 'HiddenInNavigation' AND ecm:primaryType = 'File' AND file:content/height IS NULL",
+                searchWord
+        );
+
+        // Execute the query
+        Documents docs = connector.getNuxeoClient().repository().query(query);
+        List<Document> documents = docs.getDocuments();
+
+        List<Document> result = new ArrayList<>();
+
+        for (Document doc : documents) {
+            // Get the file content as a blob
+            Blob fileContent = getBlobForDocument(doc.getId());
+
+            // Check if the file content is a PDF
+            if (fileContent.getMimeType().equals("application/pdf")) {
+                // Get the text content of the PDF
+                String textContent = null;
+                try {
+                    textContent = (String) doc.getPropertyValue("file:content/OCR/text");
+                } catch (PropertyNotFoundException e) {
+                    // OCR not available, skip this document
+                    continue;
+                }
+
+                // Check if the search word appears in the text content
+                if (textContent != null && textContent.toLowerCase().contains(searchWord.toLowerCase())) {
+                    result.add(doc);
+                }
+            }
+        }
+
+        return result;
+    }
+
 
 }
